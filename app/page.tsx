@@ -1,95 +1,178 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import BlogCard from "@/components/blogCard";
+import { BlogData } from "@/data/blogData";
+import {
+  ArrowBackIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  SearchIcon,
+} from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Grid,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Link,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+const POSTS_PER_PAGE = 6;
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+const Home = ({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) => {
+  const pathname = usePathname();
+  const { replace } = useRouter();
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams?.page) || 1
   );
-}
+  const query = searchParams?.query || "";
+
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const filteredPosts = BlogData.filter((post) =>
+    post.title.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const selectedPosts = filteredPosts.slice(
+    startIndex,
+    startIndex + POSTS_PER_PAGE
+  );
+
+  const totalPages = Math.ceil(selectedPosts.length / POSTS_PER_PAGE);
+
+  const handleSearch = useDebouncedCallback((term) => {
+    const params = new URLSearchParams(searchParams);
+
+    if (term) {
+      params.set("query", term);
+    } else {
+      params.delete("query");
+    }
+
+    replace(`${pathname}?${params.toString()}`);
+  }, 200);
+
+  return (
+    <Container as={"main"} maxW={"1280px"}>
+      {/* {Only appears when you start sesrching} */}
+      {query && (
+        <>
+          <Link
+            href="/"
+            display={"flex"}
+            gap={21}
+            alignItems={"center"}
+            _hover={{ color: "gray.secondary", textDecoration: "underline" }}
+            py={10}
+          >
+            <ArrowBackIcon />
+            <Text fontWeight={500}>Back to blog posts</Text>
+          </Link>
+          <VStack mx={"auto"} spacing={8}>
+            <Text fontWeight={700} fontSize={32}>
+              Search Blogs
+            </Text>
+
+            <InputGroup size="lg" mx={"auto"} w={540}>
+              <Input
+                pr="4.5rem"
+                type="text"
+                placeholder="Search Blog"
+                borderColor={"#000000"}
+                _hover={{
+                  borderColor: "#000000",
+                }}
+                onChange={(e) => {
+                  handleSearch(e.target.value);
+                }}
+                defaultValue={query}
+              />
+              <InputRightElement width="4.5rem">
+                <SearchIcon />
+              </InputRightElement>
+            </InputGroup>
+
+            <Text fontWeight={700}>
+              Showing {selectedPosts.length} Results of{" "}
+              <strong>"{query}"</strong>
+            </Text>
+          </VStack>
+        </>
+      )}
+
+      <Box py={10}>
+        <Text fontWeight={700} fontSize={"4xl"}>
+          The Accessibility Blog
+        </Text>
+        <Text>The voice of the excluded</Text>
+      </Box>
+      <Grid templateColumns="repeat(3, 1fr)" gap={20}>
+        {selectedPosts.map(({ id, title, publicationDate, excerpt }) => (
+          <BlogCard
+            key={id}
+            id={id}
+            title={title}
+            publicationDate={publicationDate}
+            excerpt={excerpt}
+          />
+        ))}
+      </Grid>
+
+      {/* Pagination */}
+      <Center gap={10} py={20} mx={"auto"}>
+        <Button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          bg={"transparent"}
+          border={"1px"}
+          borderColor={"#012B55"}
+          borderRadius={4}
+          px={1}
+          _hover={{ bg: "black", color: "white", borderColor: "white" }}
+        >
+          <ChevronLeftIcon w={13} h={13} />
+        </Button>
+        <Text>
+          Page {currentPage} of {totalPages}
+        </Text>
+        <Button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          bg={"transparent"}
+          border={"1px"}
+          borderColor={"#012B55"}
+          borderRadius={4}
+          px={1}
+          _hover={{ bg: "black", color: "white", borderColor: "white" }}
+        >
+          <ChevronRightIcon />
+        </Button>
+      </Center>
+    </Container>
+  );
+};
+
+export default Home;
