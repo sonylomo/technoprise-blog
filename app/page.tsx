@@ -1,7 +1,7 @@
 "use client";
 
-import BlogCard from "@/components/blogCard";
-import { BlogData } from "@/data/blogData";
+import BlogCard from "../components/blogCard";
+import { BlogData } from "../data/blogData";
 import {
   ArrowBackIcon,
   ChevronLeftIcon,
@@ -18,6 +18,7 @@ import {
   InputGroup,
   InputRightElement,
   Link,
+  SimpleGrid,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -117,7 +118,7 @@ const Home = ({
 
             <Text fontWeight={700}>
               Showing {selectedPosts.length} Results of{" "}
-              <strong>"{query}"</strong>
+              <strong>&quot;{query}&quot;</strong>
             </Text>
           </VStack>
         </>
@@ -129,7 +130,7 @@ const Home = ({
         </Text>
         <Text>The voice of the excluded</Text>
       </Box>
-      <Grid templateColumns="repeat(3, 1fr)" gap={20}>
+      <SimpleGrid columns={{ sm: 2, lg: 3 }} gap={{ base: 10, lg: 20 }}>
         {selectedPosts.map(({ id, title, publicationDate, excerpt }) => (
           <BlogCard
             key={id}
@@ -139,11 +140,12 @@ const Home = ({
             excerpt={excerpt}
           />
         ))}
-      </Grid>
+      </SimpleGrid>
 
       {/* Pagination */}
-      <Center gap={10} py={20} mx={"auto"}>
+      <Center gap={10} py={[10, 20]} mx={"auto"}>
         <Button
+          aria-label="Previous page"
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
           bg={"transparent"}
@@ -159,6 +161,7 @@ const Home = ({
           Page {currentPage} of {totalPages}
         </Text>
         <Button
+          aria-label="Next page"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
           bg={"transparent"}

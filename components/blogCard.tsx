@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDate } from "@/lib/formatDate";
+import { formatDate } from "../lib/formatDate";
 import { Box, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import Image from "next/image";
 
@@ -19,6 +19,7 @@ const BlogCard = ({
 
   return (
     <Link
+      data-testid="blog-card"
       href={"/posts/" + id}
       _hover={{
         textDecoration: "none",

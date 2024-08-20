@@ -3,15 +3,17 @@ import Image from "next/image";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  
+
   return (
     <Flex
       as={"footer"}
       bg="gray.primary"
-      px={70}
+      px={[4, 70]}
       py={15}
       justify={"space-between"}
       alignItems={"center"}
+      direction={["column", "row"]}
+      gap={[4, 0]}
     >
       <Box>
         <Image

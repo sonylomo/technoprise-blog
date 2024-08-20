@@ -1,11 +1,11 @@
 "use client";
 
-import { BlogData } from "@/data/blogData";
+import { BlogData } from "../../../data/blogData";
+import { formatDate } from "../../../lib/formatDate";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { Box, Center, Container, Link, Text, VStack } from "@chakra-ui/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { formatDate } from "@/lib/formatDate";
 
 type BlogDataType = {
   id: number;
@@ -32,7 +32,7 @@ const Post = ({ params }: { params: { slug: string } }) => {
   }
 
   return (
-    <Container maxW={"1280px"} py={10}>
+    <Container maxW={"1280px"} py={[4, 10]}>
       <Link
         href="/"
         display={"flex"}
@@ -43,7 +43,7 @@ const Post = ({ params }: { params: { slug: string } }) => {
         <ArrowBackIcon />
         <Text fontWeight={500}>Back to blog posts</Text>
       </Link>
-      <VStack spacing={10} mx={"auto"} pt={12}>
+      <VStack spacing={10} mx={"auto"} pt={[6, 12]}>
         <Box>
           <Text fontWeight={700} fontSize={"4xl"} textAlign={"center"}>
             {post.title}
@@ -71,11 +71,3 @@ const Post = ({ params }: { params: { slug: string } }) => {
 };
 
 export default Post;
-
-// export async function getStaticParams() {
-//   const paths = BlogData.map((post) => ({
-//     params: { slug: post.id },
-//   }));
-
-//   return { paths, fallback: false };
-// }
