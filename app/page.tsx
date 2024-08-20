@@ -77,7 +77,7 @@ const Home = ({
     }
 
     replace(`${pathname}?${params.toString()}`);
-  }, 200);
+  }, 300);
 
   return (
     <Container as={"main"} maxW={"1280px"}>
