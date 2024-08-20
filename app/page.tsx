@@ -44,6 +44,21 @@ const Home = ({
   );
   const query = searchParams?.query || "";
 
+  const filteredPosts = BlogData.filter((post) =>
+    post.title.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+
+  const selectedPosts = filteredPosts.slice(
+    startIndex,
+    startIndex + POSTS_PER_PAGE
+  );
+
+  const totalPages = query
+    ? Math.ceil(selectedPosts.length / POSTS_PER_PAGE)
+    : Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
   };
@@ -51,18 +66,6 @@ const Home = ({
   const handlePreviousPage = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
   };
-
-  const filteredPosts = BlogData.filter((post) =>
-    post.title.toLowerCase().includes(query.toLowerCase())
-  );
-
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const selectedPosts = filteredPosts.slice(
-    startIndex,
-    startIndex + POSTS_PER_PAGE
-  );
-
-  const totalPages = Math.ceil(selectedPosts.length / POSTS_PER_PAGE);
 
   const handleSearch = useDebouncedCallback((term) => {
     const params = new URLSearchParams(searchParams);
@@ -78,7 +81,7 @@ const Home = ({
 
   return (
     <Container as={"main"} maxW={"1280px"}>
-      {/* {Only appears when you start sesrching} */}
+      {/* {Only appears when you start searching} */}
       {query && (
         <>
           <Link
