@@ -1,12 +1,8 @@
 "use client";
 
+import { formatDate } from "@/lib/formatDate";
 import { Box, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import Image from "next/image";
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", { year: "numeric", month: "short" });
-};
 
 const BlogCard = ({
   id,
